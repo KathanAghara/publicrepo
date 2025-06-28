@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add AI Scoring fields to lead form view -->
+    <record id="crm_lead_view_form_ai_scoring" model="ir.ui.view">
+        <field name="name">crm.lead.form.ai.scoring</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_ai_score_lead"
+                        string="AI Score Lead"
+                        type="object"
+                        class="btn-primary"
+                        icon="fa-magic"/>
+            </xpath>
+
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <group string="🎯 AI Lead Scoring" col="4">
+                    <field name="ai_score" readonly="1" widget="gauge"
+                           options="{'max_value': 100, 'style': 'width:120px; height: 90px;'}"/>
+                    <field name="ai_score_category" readonly="1" widget="badge"
+                           decoration-success="ai_score_category == 'hot'"
+                           decoration-warning="ai_score_category == 'warm'"
+                           decoration-info="ai_score_category == 'cold'"/>
+                    <field name="ai_last_scored" readonly="1"/>
+                </group>
+            </xpath>
+
+            <!-- Add AI Analysis tab in notebook -->
+            <xpath expr="//notebook" position="inside">
+                <page string="AI Analysis" invisible="ai_score == 0.0">
+                    <group>
+                        <field name="ai_score_reason" readonly="1" nolabel="1"
+                               widget="text" options="{'pre': True}"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <!-- Add AI Scoring fields to lead tree view -->
+    <record id="crm_lead_view_tree_ai_scoring" model="ir.ui.view">
+        <field name="name">crm.lead.tree.ai.scoring</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_leads"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="decoration-success">ai_score_category == 'hot'</attribute>
+                <attribute name="decoration-warning">ai_score_category == 'warm'</attribute>
+                <attribute name="decoration-info">ai_score_category == 'cold'</attribute>
+                <attribute name="decoration-muted">ai_score_category == 'not_scored'</attribute>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="ai_score" optional="show"/>
+                <field name="ai_score_category" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add search filters for AI scoring -->
+    <record id="crm_lead_view_search_ai_scoring" model="ir.ui.view">
+        <field name="name">crm.lead.search.ai.scoring</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_leads_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']" position="after">
+                <separator/>
+                <filter name="hot_leads" string="Hot Leads" domain="[('ai_score_category', '=', 'hot')]"/>
+                <filter name="warm_leads" string="Warm Leads" domain="[('ai_score_category', '=', 'warm')]"/>
+                <filter name="cold_leads" string="Cold Leads" domain="[('ai_score_category', '=', 'cold')]"/>
+                <filter name="not_scored" string="Not Scored" domain="[('ai_score_category', '=', 'not_scored')]"/>
+            </xpath>
+
+            <xpath expr="//group" position="inside">
+                <filter name="group_by_score_category" string="Score Category"
+                        context="{'group_by': 'ai_score_category'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add bulk scoring action -->
+    <record id="action_bulk_lead_scoring" model="ir.actions.act_window">
+        <field name="name">Bulk Lead Scoring</field>
+        <field name="res_model">bulk.scoring.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="crm.model_crm_lead"/>
+        <field name="binding_view_types">list</field>
+    </record>
+
+</odoo>

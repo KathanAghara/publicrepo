@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- AI Scoring Detail Form View -->
+    <record id="ai_scoring_detail_view_form" model="ir.ui.view">
+        <field name="name">ai.scoring.detail.form</field>
+        <field name="model">ai.scoring.detail</field>
+        <field name="arch" type="xml">
+            <form string="AI Scoring Detail">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="lead_id"/>
+                            <field name="field_name"/>
+                            <field name="score"/>
+                            <field name="create_date"/>
+                        </group>
+                    </group>
+                    <group string="Field Value">
+                        <field name="field_value" nolabel="1"/>
+                    </group>
+                    <group string="AI Scoring Reason">
+                        <field name="reason" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- AI Scoring Detail list View -->
+    <record id="ai_scoring_detail_view_list" model="ir.ui.view">
+        <field name="name">ai.scoring.detail.list</field>
+        <field name="model">ai.scoring.detail</field>
+        <field name="arch" type="xml">
+            <list string="AI Scoring Details">
+                <field name="lead_id"/>
+                <field name="field_name"/>
+                <field name="score"/>
+                <field name="create_date"/>
+                <field name="reason"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- AI Scoring Detail Action -->
+    <record id="action_ai_scoring_detail" model="ir.actions.act_window">
+        <field name="name">AI Scoring Details</field>
+        <field name="res_model">ai.scoring.detail</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No AI Scoring Details Found
+            </p>
+            <p>
+                Scoring details will appear here after leads are scored using AI.
+            </p>
+        </field>
+    </record>
+
+    <!-- Add menu item for AI Scoring Details -->
+    <menuitem id="menu_ai_scoring_detail"
+              name="AI Scoring Details"
+              parent="crm.crm_menu_report"
+              action="action_ai_scoring_detail"
+              sequence="30"/>
+
+</odoo>
